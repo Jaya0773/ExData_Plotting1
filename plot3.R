@@ -1,0 +1,20 @@
+#Read the data and create the histogram
+library(dplyr)
+data <- read.table("household_power_consumption.txt", sep = ";", header = TRUE, stringsAsFactors = FALSE)
+data$Date <- as.Date(data$Date, format = "%d/%m/%Y")
+data <- subset(data, Date == "2007-02-01" | Date == "2007-02-02")
+data$Global_active_power <- as.numeric(data$Global_active_power)
+data <- tbl_df(data)
+data <- mutate(data, date_time = paste(Date, Time, sep = " "))
+data$date_time <- strptime(data$date_time, format = "%Y-%m-%d %H:%M:%S")
+#Create PNG device
+png(filename = "plot3.png")
+#Create the plot
+data$Sub_metering_1 <- as.numeric(data$Sub_metering_1)
+data$Sub_metering_2 <- as.numeric(data$Sub_metering_2)
+data$Sub_metering_3 <- as.numeric(data$Sub_metering_3)
+plot(data$date_time, data$Sub_metering_1 ,type = "l", col = "black", xlab = " " , ylab = "Energy sub metering")
+lines(data$date_time, data$Sub_metering_2 ,type = "l", col = "red")
+lines(data$date_time, data$Sub_metering_3 ,type = "l", col = "blue")
+legend("topright", lty= 1, col = c("Black", "red", "blue"), legend = c( "Sub_metering_1", "Sub_metering_2", "Sub_metering_3"))
+dev.off()
